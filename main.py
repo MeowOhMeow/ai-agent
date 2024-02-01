@@ -28,4 +28,3 @@ if __name__ == "__main__":
         # clear memory
         torch.cuda.empty_cache()
         gc.collect()
-
