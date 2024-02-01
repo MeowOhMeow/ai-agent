@@ -1,0 +1,11 @@
+*.txt
+*.csv
+Translate/fine-tuned-model/*
+test.*
+*.mp4
+*.wav
+*.mp3
+VITS/*
+**/__pycache__/*
+!VITS\TTS.py
+GPT/openai_key
