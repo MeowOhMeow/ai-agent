@@ -1,4 +1,3 @@
-
 import sounddevice as sd
 
 import os
@@ -72,12 +71,14 @@ class TTS:
     def __call__(
         self,
         text: str,
-        speaker: str = "kaguya",
-        language: str = "日本語",
-        speed: float = 0.7,
-        noise_scale: float = 0.667,
-        noise_scale_w: float = 0.6,
+        **kwargs,
     ) -> Tuple[int, np.ndarray]:
+        speaker: str = kwargs.get("speaker", "kaguya")
+        language: str = kwargs.get("language", "日本語")
+        speed: float = kwargs.get("speed", 0.7)
+        noise_scale: float = kwargs.get("noise_scale", 0.667)
+        noise_scale_w: float = kwargs.get("noise_scale_w", 0.6)
+
         text = language_marks[language] + text + language_marks[language]
 
         speaker_id = self.speaker_ids[speaker]
@@ -116,7 +117,9 @@ if __name__ == "__main__":
     sd.play(audio, rate)
     sd.wait()
     print(f"noise_scale: 0.333, noise_scale_w: 0.6")
-    audio = tts("こんにちは、私は日本語を話します。", noise_scale=0.333, noise_scale_w=0.6)
+    audio = tts(
+        "こんにちは、私は日本語を話します。", noise_scale=0.333, noise_scale_w=0.6
+    )
     # play
     sd.play(audio, rate)
     sd.wait()
@@ -126,12 +129,16 @@ if __name__ == "__main__":
     sd.play(audio, rate)
     sd.wait()
     print(f"noise_scale: 0.667, noise_scale_w: 0.3")
-    audio = tts("こんにちは、私は日本語を話します。", noise_scale=0.667, noise_scale_w=0.3)
+    audio = tts(
+        "こんにちは、私は日本語を話します。", noise_scale=0.667, noise_scale_w=0.3
+    )
     # play
     sd.play(audio, rate)
     sd.wait()
     print(f"noise_scale: 0.667, noise_scale_w: 0.9")
-    audio = tts("こんにちは、私は日本語を話します。", noise_scale=0.667, noise_scale_w=0.9)
+    audio = tts(
+        "こんにちは、私は日本語を話します。", noise_scale=0.667, noise_scale_w=0.9
+    )
     # play
     sd.play(audio, rate)
     sd.wait()

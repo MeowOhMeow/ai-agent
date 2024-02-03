@@ -23,12 +23,12 @@ class API:
     def get_speakers(self) -> list:
         return self.TTS.get_speakers()
 
-    def __call__(self, text: str, args: dict) -> Tuple[str, int, np.ndarray]:
+    def __call__(self, text: str, **kwargs) -> Tuple[str, int, np.ndarray]:
         response = self.openai_api(text)
         print(f"Response: {response}")
         translated = self.translator(response)
         print(f"Translated: {translated}")
-        audio = self.TTS(translated, **args)
+        audio = self.TTS(translated, **kwargs)
         return audio
 
 

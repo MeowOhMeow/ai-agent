@@ -5,7 +5,7 @@ import sounddevice as sd
 import torch
 import gc
 
-args = {
+kwargs = {
     "speaker": "kaguya",
     "language": "日本語",
     "speed": 0.7,
@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     while True:
         text = input("Text: ")
-        audio = api(text, args)
+        audio = api(text, **kwargs)
         # play
         sd.play(audio, rate)
         sd.wait()
