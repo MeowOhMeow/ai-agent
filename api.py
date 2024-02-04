@@ -1,7 +1,6 @@
 import sounddevice as sd
 
 import numpy as np
-from typing import Tuple
 
 import sys
 
@@ -23,7 +22,7 @@ class API:
     def get_speakers(self) -> list:
         return self.TTS.get_speakers()
 
-    def __call__(self, text: str, **kwargs) -> Tuple[str, int, np.ndarray]:
+    def __call__(self, text: str, **kwargs) -> np.ndarray:
         response = self.openai_api(text)
         print(f"Response: {response}")
         translated = self.translator(response)
