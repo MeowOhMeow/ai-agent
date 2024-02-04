@@ -8,8 +8,13 @@ sys.path.append("VITS")
 
 
 from GPT.OpenAI_API import OpenAI_API
-from Translator.Translator import Translator
 from VITS.TTS import TTS
+
+version = "v1"
+if version == "v1":
+    from Translator.Translator_v1 import Translator
+elif version == "v2":
+    from Translator.Translator_v2 import Translator
 
 
 class API:
@@ -34,7 +39,9 @@ class API:
 if __name__ == "__main__":
     api = API()
     rate = api.rate
-    audio = api("ひなの想讓一ノ瀬うるは說出福利台詞而撰寫妄想音聲，沒想到暴露後馬上收到完美前輩的配音")
+    audio = api(
+        "ひなの想讓一ノ瀬うるは說出福利台詞而撰寫妄想音聲，沒想到暴露後馬上收到完美前輩的配音"
+    )
     # play
     sd.play(audio, rate)
     sd.wait()

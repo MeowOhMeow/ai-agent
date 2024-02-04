@@ -7,8 +7,14 @@ import sys
 
 sys.path.append("VITS")
 
-from Translator.Translator import Translator
 from VITS.TTS import TTS
+
+version = "v1"
+if version == "v1":
+    from Translator.Translator_v1 import Translator
+elif version == "v2":
+    from Translator.Translator_v2 import Translator
+
 
 class transTTS:
     def __init__(self) -> None:
@@ -21,11 +27,13 @@ class transTTS:
         print(translated)
         audio = self.tts(translated, **kwargs)
         return audio, self.tts.rate
-    
+
+
 if __name__ == "__main__":
     transTTS = transTTS()
-    audio, rate = transTTS("ひなの想讓一ノ瀬うるは說出福利台詞而撰寫妄想音聲，沒想到暴露後馬上收到完美前輩的配音")
+    audio, rate = transTTS(
+        "ひなの想讓一ノ瀬うるは說出福利台詞而撰寫妄想音聲，沒想到暴露後馬上收到完美前輩的配音"
+    )
     # play
     sd.play(audio, rate)
     sd.wait()
-
