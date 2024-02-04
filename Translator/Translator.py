@@ -33,8 +33,8 @@ import translators as ts
 
 
 class Translator:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, translator: str = 'bing') -> None:
+        self.translator = translator
         # _ = ts.preaccelerate_and_speedtest()
 
     def __call__(
@@ -42,7 +42,7 @@ class Translator:
         text: str,
         lang_code: str = "ja",
     ) -> str:
-        return ts.translate_text(text, to_language=lang_code, translator="google")
+        return ts.translate_text(text, to_language=lang_code, translator=self.translator)
 
 
 if __name__ == "__main__":
