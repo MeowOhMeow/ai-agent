@@ -59,6 +59,13 @@ class RightFrame(tk.Frame):
         )
         self.noise_scale_w_scale.grid(row=2, column=0)
 
+        self.button = tk.Button(self, text="Replay", command=self.on_button_click)
+        self.button.grid(row=3, column=0)
+
+    def on_button_click(self):
+        sd.play(self.master.audio, self.master.rate)
+        sd.wait()
+        
     def get_kwargs(self):
         return {
             "speed": self.speed_scale.get(),
@@ -121,9 +128,9 @@ class App(tk.Tk):
 
     def generate_and_play(self, text):
         kwargs = self.right_frame.get_kwargs()
-        response, audio = self.api(text, **kwargs)
+        response, self.audio = self.api(text, **kwargs)
         self.left_frame.append_text("[Kaguya] >> " + response + "\n")
-        sd.play(audio, self.rate)
+        sd.play(self.audio, self.rate)
         sd.wait()
         self.task_thread.join()
 
