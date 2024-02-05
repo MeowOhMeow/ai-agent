@@ -12,7 +12,7 @@ class ScaleFrame(tk.Frame):
         self.grid_columnconfigure(1, weight=1)
 
         scale_label = tk.Label(self, text=label)
-        scale_label.grid(row=0, column=0, columnspan=0)
+        scale_label.grid(row=0, column=0)
 
         self.scale = tk.Scale(
             self,
@@ -23,7 +23,7 @@ class ScaleFrame(tk.Frame):
         )
         self.scale.set(init_val)
         self.scale.grid(row=0, column=1)
-        
+
     def get(self):
         return self.scale.get()
 
@@ -34,13 +34,29 @@ class RightFrame(tk.Frame):
 
         self.grid_columnconfigure(0, weight=1)
 
-        self.speed_scale = ScaleFrame(self, label="Speed", from_=0.1, to=2, resolution=0.1, init_val=0.7)
+        self.speed_scale = ScaleFrame(
+            self, label="Speed", from_=0.1, to=2, resolution=0.1, init_val=0.7
+        )
         self.speed_scale.grid(row=0, column=0)
 
-        self.noise_scale_scale = ScaleFrame(self, label="Noise Scale", from_=0.0, to=1.0, resolution=0.05, init_val=0.665)
+        self.noise_scale_scale = ScaleFrame(
+            self,
+            label="Noise Scale",
+            from_=0.0,
+            to=1.0,
+            resolution=0.05,
+            init_val=0.665,
+        )
         self.noise_scale_scale.grid(row=1, column=0)
 
-        self.noise_scale_w_scale = ScaleFrame(self, label="Noise Scale W", from_=0.0, to=1.0, resolution=0.05, init_val=0.6)
+        self.noise_scale_w_scale = ScaleFrame(
+            self,
+            label="Noise Scale W",
+            from_=0.0,
+            to=1.0,
+            resolution=0.05,
+            init_val=0.6,
+        )
         self.noise_scale_w_scale.grid(row=2, column=0)
 
     def get_kwargs(self):
@@ -100,9 +116,7 @@ class App(tk.Tk):
         self.left_frame.clear_text()
         self.left_frame.append_text("[You] >> " + text + "\n")
 
-        self.task_thread = threading.Thread(
-            target=self.generate_and_play, args=(text,)
-        )
+        self.task_thread = threading.Thread(target=self.generate_and_play, args=(text,))
         self.task_thread.start()
 
     def generate_and_play(self, text):
