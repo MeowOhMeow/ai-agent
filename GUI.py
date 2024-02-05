@@ -62,20 +62,29 @@ class RightFrame(tk.Frame):
         self.replay_button = tk.Button(self, text="Replay", command=self.replay_button_click)
         self.replay_button.grid(row=3, column=0)
 
+        self.regenerate_button = tk.Button(self, text="Regenerate", command=self.regenerate_button_click)
+        self.regenerate_button.grid(row=4, column=0)
+        
         self.generating = False  # 新增一個變數來追蹤是否正在生成
         self.replay_button.config(state=tk.DISABLED)    # 不能剛啟動就按replay
+        self.regenerate_button.config(state=tk.DISABLED)    # 不能剛啟動就按replay
 
     def replay_button_click(self):
         if not self.generating:
             sd.play(self.master.audio, self.master.rate)
             sd.wait()
 
+    def regenerate_button_click(self):
+        print("regenerate_button click!!!")
+
     def set_generating_state(self, state):
         self.generating = state
         if state:
             self.replay_button.config(state=tk.DISABLED)
+            self.regenerate_button.config(state=tk.DISABLED)
         else:
             self.replay_button.config(state=tk.NORMAL)
+            self.regenerate_button.config(state=tk.NORMAL)
         
     def get_kwargs(self):
         return {
