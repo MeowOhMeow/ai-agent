@@ -2,6 +2,7 @@
 *.csv
 Translate/fine-tuned-model/*
 test.*
+test1.*
 *.mp4
 *.wav
 *.mp3
