@@ -59,10 +59,11 @@ class RightFrame(tk.Frame):
         )
         self.noise_scale_w_scale.grid(row=2, column=0)
 
-        self.button = tk.Button(self, text="Replay", command=self.replay_button_click)
-        self.button.grid(row=3, column=0)
+        self.replay_button = tk.Button(self, text="Replay", command=self.replay_button_click)
+        self.replay_button.grid(row=3, column=0)
 
         self.generating = False  # 新增一個變數來追蹤是否正在生成
+        self.replay_button.config(state=tk.DISABLED)    # 不能剛啟動就按replay
 
     def replay_button_click(self):
         if not self.generating:
@@ -72,9 +73,9 @@ class RightFrame(tk.Frame):
     def set_generating_state(self, state):
         self.generating = state
         if state:
-            self.button.config(state=tk.DISABLED)
+            self.replay_button.config(state=tk.DISABLED)
         else:
-            self.button.config(state=tk.NORMAL)
+            self.replay_button.config(state=tk.NORMAL)
         
     def get_kwargs(self):
         return {
