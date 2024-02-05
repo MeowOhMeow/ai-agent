@@ -75,8 +75,8 @@ class RightFrame(tk.Frame):
             sd.wait()
 
     def regenerate_button_click(self):
+        self.master.api.openai_api.message_history.pop()
         self.master.generate_and_play(self.master.text)
-        print("test")
 
     def set_generating_state(self, state):
         self.generating = state
