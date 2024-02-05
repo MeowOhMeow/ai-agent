@@ -33,13 +33,13 @@ class API:
         translated = self.translator(response)
         print(f"Translated: {translated}")
         audio = self.TTS(translated, **kwargs)
-        return audio
+        return response, audio
 
 
 if __name__ == "__main__":
     api = API()
     rate = api.rate
-    audio = api(
+    _, audio = api(
         "ひなの想讓一ノ瀬うるは說出福利台詞而撰寫妄想音聲，沒想到暴露後馬上收到完美前輩的配音"
     )
     # play
