@@ -13,10 +13,11 @@ class LeftFrame(tk.Frame):
             to=2,
             resolution=0.1,
             orient=tk.HORIZONTAL,
-            label="Speed",
         )
         self.speed_scale.set(0.7)
-        self.speed_scale.grid(row=0, column=0, pady=10)
+        speed_scale_label = tk.Label(text="Speed")
+        speed_scale_label.grid(row=0, column=1, columnspan=2)
+        self.speed_scale.grid(row=0, column=2)
 
         self.noise_scale_scale = tk.Scale(
             self,
@@ -24,10 +25,11 @@ class LeftFrame(tk.Frame):
             to=1.0,
             resolution=0.05,
             orient=tk.HORIZONTAL,
-            label="Noise Scale",
         )
         self.noise_scale_scale.set(0.667)
-        self.noise_scale_scale.grid(row=1, column=0, pady=10)
+        noise_scale_scale_label = tk.Label(text="Noise Scale")
+        noise_scale_scale_label.grid(row=1, column=1, columnspan=2)
+        self.noise_scale_scale.grid(row=1, column=2)
 
         self.noise_scale_w_scale = tk.Scale(
             self,
@@ -35,13 +37,14 @@ class LeftFrame(tk.Frame):
             to=1.0,
             resolution=0.05,
             orient=tk.HORIZONTAL,
-            label="Noise Scale W",
         )
         self.noise_scale_w_scale.set(0.6)
-        self.noise_scale_w_scale.grid(pady=15)
+        noise_scale_w_scale_label = tk.Label(text="Noise Scale W")
+        noise_scale_w_scale_label.grid(row=2, column=1, columnspan=2)
+        self.noise_scale_w_scale.grid(row=2, column=2)
 
         self.text_entry = tk.Entry(self, width=30)
-        self.text_entry.grid(row=17, column=0, columnspan=2)
+        self.text_entry.grid(row=10, column=0, columnspan=2)
         self.text_entry.bind("<Return>", self.master.generate_audio)
 
     def get_text(self):
@@ -49,6 +52,7 @@ class LeftFrame(tk.Frame):
 
     def clear_text(self):
         self.text_entry.delete(0, tk.END)
+
 
 
 class RightFrame(tk.Frame):
