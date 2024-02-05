@@ -20,12 +20,11 @@
 
 ## 輸入
 1. 文字
-2. 語音
+2. TODO: 語音
     - [openai/whisper-base](https://huggingface.co/openai/whisper-base)
 
 ## 翻譯
 - [facebook/nllb-200-distilled-600M](https://huggingface.co/facebook/nllb-200-distilled-600M)
-
 
 ## 語音合成
 - [Plachtaa/VITS-fast-fine-tuning](https://github.com/Plachtaa/VITS-fast-fine-tuning/tree/main)
@@ -39,3 +38,6 @@
 3. 在 VITS\output_models 放入 finetune_speaker.json, G_latest.pth [載點 - Google drive](https://drive.google.com/drive/folders/1-40Dd3CRDzVGoL5gdRj39oN_uWKdOvp2?usp=sharing)
 4. 在 GPT\openai_key 放入openai api key
 5. run main.py
+
+## 其他：
+- GUI還沒做好
