@@ -75,8 +75,9 @@ class RightFrame(tk.Frame):
             sd.wait()
 
     def regenerate_button_click(self):
-        self.master.api.openai_api.message_history.pop()
-        self.master.generate_and_play(self.master.text)
+        if not self.generating:
+            self.master.api.openai_api.message_history.pop()
+            self.master.regenerate()
 
     def set_generating_state(self, state):
         self.generating = state
@@ -147,10 +148,14 @@ class App(tk.Tk):
         self.task_thread = threading.Thread(target=self.generate_and_play, args=(self.text,))
         self.task_thread.start()
 
+    def regenerate(self, event=None):
+        self.right_frame.set_generating_state(True)
+        self.task_thread = threading.Thread(target=self.generate_and_play, args=(self.text,))
+        self.task_thread.start()
+
     def generate_and_play(self, text):
         kwargs = self.right_frame.get_kwargs()
         response, self.audio = self.api(text, **kwargs)
-        self.right_frame.set_generating_state(True)
         self.left_frame.append_text("[Kaguya] >> " + response + "\n")
         sd.play(self.audio, self.rate)
         sd.wait()
