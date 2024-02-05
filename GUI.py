@@ -59,12 +59,22 @@ class RightFrame(tk.Frame):
         )
         self.noise_scale_w_scale.grid(row=2, column=0)
 
-        self.button = tk.Button(self, text="Replay", command=self.on_button_click)
+        self.button = tk.Button(self, text="Replay", command=self.replay_button_click)
         self.button.grid(row=3, column=0)
 
-    def on_button_click(self):
-        sd.play(self.master.audio, self.master.rate)
-        sd.wait()
+        self.generating = False  # 新增一個變數來追蹤是否正在生成
+
+    def replay_button_click(self):
+        if not self.generating:
+            sd.play(self.master.audio, self.master.rate)
+            sd.wait()
+
+    def set_generating_state(self, state):
+        self.generating = state
+        if state:
+            self.button.config(state=tk.DISABLED)
+        else:
+            self.button.config(state=tk.NORMAL)
         
     def get_kwargs(self):
         return {
@@ -129,9 +139,11 @@ class App(tk.Tk):
     def generate_and_play(self, text):
         kwargs = self.right_frame.get_kwargs()
         response, self.audio = self.api(text, **kwargs)
+        self.right_frame.set_generating_state(True)
         self.left_frame.append_text("[Kaguya] >> " + response + "\n")
         sd.play(self.audio, self.rate)
         sd.wait()
+        self.right_frame.set_generating_state(False)
         self.task_thread.join()
 
 
