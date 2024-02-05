@@ -75,7 +75,8 @@ class RightFrame(tk.Frame):
             sd.wait()
 
     def regenerate_button_click(self):
-        print("regenerate_button click!!!")
+        self.master.generate_and_play(self.master.text)
+        print("test")
 
     def set_generating_state(self, state):
         self.generating = state
@@ -139,11 +140,11 @@ class App(tk.Tk):
         self.task_thread = None
 
     def generate_audio(self, event=None):
-        text = self.left_frame.get_text()
+        self.text = self.left_frame.get_text()
         self.left_frame.clear_text()
-        self.left_frame.append_text("[You] >> " + text + "\n")
+        self.left_frame.append_text("[You] >> " + self.text + "\n")
 
-        self.task_thread = threading.Thread(target=self.generate_and_play, args=(text,))
+        self.task_thread = threading.Thread(target=self.generate_and_play, args=(self.text,))
         self.task_thread.start()
 
     def generate_and_play(self, text):
