@@ -62,31 +62,30 @@ class RightFrame(tk.Frame):
         self.replay_button = tk.Button(self, text="Replay", command=self.replay_button_click)
         self.replay_button.grid(row=3, column=0)
 
-        self.regenerate_button = tk.Button(self, text="Regenerate", command=self.regenerate_button_click)
-        self.regenerate_button.grid(row=4, column=0)
+        self.regenerate_response_button = tk.Button(self, text="Regenerate_response", command=self.regenerate_response_button_click)
+        self.regenerate_response_button.grid(row=4, column=0)
         
         self.generating = False  # 新增一個變數來追蹤是否正在生成
         self.replay_button.config(state=tk.DISABLED)    # 不能剛啟動就按replay
-        self.regenerate_button.config(state=tk.DISABLED)    # 不能剛啟動就按replay
+        self.regenerate_response_button.config(state=tk.DISABLED)    # 不能剛啟動就按replay
 
     def replay_button_click(self):
         if not self.generating:
-            sd.play(self.master.audio, self.master.rate)
-            sd.wait()
+            self.master.replay_f()
 
-    def regenerate_button_click(self):
+    def regenerate_response_button_click(self):
         if not self.generating:
             self.master.api.openai_api.message_history.pop()
-            self.master.regenerate()
+            self.master.regenerate_response()
 
     def set_generating_state(self, state):
         self.generating = state
         if state:
             self.replay_button.config(state=tk.DISABLED)
-            self.regenerate_button.config(state=tk.DISABLED)
+            self.regenerate_response_button.config(state=tk.DISABLED)
         else:
             self.replay_button.config(state=tk.NORMAL)
-            self.regenerate_button.config(state=tk.NORMAL)
+            self.regenerate_response_button.config(state=tk.NORMAL)
         
     def get_kwargs(self):
         return {
@@ -148,10 +147,21 @@ class App(tk.Tk):
         self.task_thread = threading.Thread(target=self.generate_and_play, args=(self.text,))
         self.task_thread.start()
 
-    def regenerate(self, event=None):
+    def regenerate_response(self, event=None):
         self.right_frame.set_generating_state(True)
         self.task_thread = threading.Thread(target=self.generate_and_play, args=(self.text,))
         self.task_thread.start()
+
+    def replay_f(self, event=None):
+        self.right_frame.set_generating_state(True)
+        self.task_thread = threading.Thread(target=self.replay)
+        self.task_thread.start()
+
+    def replay(self, event=None):
+        sd.play(self.audio, self.rate)
+        sd.wait()
+        self.right_frame.set_generating_state(False)
+        self.task_thread.join()
 
     def generate_and_play(self, text):
         kwargs = self.right_frame.get_kwargs()
@@ -161,7 +171,6 @@ class App(tk.Tk):
         sd.wait()
         self.right_frame.set_generating_state(False)
         self.task_thread.join()
-
 
 if __name__ == "__main__":
     app = App()
