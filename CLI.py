@@ -97,6 +97,29 @@ class KwargsCommand(Command):
         global kwargs
         print(kwargs)
 
+class RegenerateCommand(Command):
+    def __init__(self, api_instance):
+        super().__init__("regenerate", "Regenerate audio response", "regenerate")
+        self.api = api_instance
+        self.response = None  # 初始化 response
+        self.audio = None  # 初始化 audio
+
+    def __call__(self):
+        if self.api is None:
+            print("Error: API instance is None")
+            return
+
+        try:
+            print("test1")
+            self.response, self.audio = self.api.regenerate_response(**kwargs)
+            if self.response is None or self.audio is None:
+                print("Error: API response or audio is None")
+                return
+            sd.play(self.audio, rate)
+            sd.wait()
+        except Exception as e:
+            print("Error:", e)
+
 
 kwargs = {
     "speaker": "kaguya",
@@ -106,6 +129,8 @@ kwargs = {
     "noise_scale_w": 0.6,
 }
 
+api = API()
+
 # Map commands to functions
 commands = {
     "quit": QuitCommand(),
@@ -113,9 +138,10 @@ commands = {
     "set": SetCommand(),
     "reset": ResetCommand(kwargs),
     "kwargs": KwargsCommand(),
+    "regenerate": RegenerateCommand(api),
 }
 
-api = API()
+
 rate = api.rate
 
 print("type 'help' for help")
