@@ -75,6 +75,13 @@ class RightFrame(tk.Frame):
         )
         self.regenerate_response_button.grid(row=4, column=0)
 
+        self.regenerate_audio_button = tk.Button(
+            self,
+            text="Regenerate_audio",
+            command=self.regenerate_audio,
+        )
+        self.regenerate_audio_button.grid(row=6, column=0)
+
         self.save_audio_button = tk.Button(
             self, text="Save audio response ", command=self.save_audio_button_click
         )
@@ -92,6 +99,22 @@ class RightFrame(tk.Frame):
             args=(text,),
         )
         self.task_thread.start()
+
+    def regenerate_audio(self, event: tk.Event):
+        print("test")
+        if self.task_thread and self.task_thread.is_alive():
+            return
+        text = event.widget.get_text()
+        self.task_thread = threading.Thread(
+            target=self._regenerate_audio,
+            args=(text,),
+        )
+        self.task_thread.start()
+
+    def _regenerate_audio(self, text):
+        self.response, self.audio = self.api.regenerate_audio(text, **self.get_kwargs())
+        self.master.event_generate("<<Generated>>")
+        self.play()
 
     def generate_response(self, text):
         self.response, self.audio = self.api(text, **self.get_kwargs())
