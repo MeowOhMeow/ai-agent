@@ -28,11 +28,13 @@ class RightFrame(tk.Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.grid_columnconfigure(0, weight=1)
+        self.api = API()
+        self.rate = self.api.rate
 
         self.create_widgets()
 
-        self.generating = False
-        self.disable_buttons()
+        self.master.bind("<<Generate>>", self.generate_audio)
+        self.task_thread = None
 
     def create_widgets(self):
         self.speed_scale = ScaleFrame(
@@ -77,41 +79,50 @@ class RightFrame(tk.Frame):
         )
         self.save_audio_button.grid(row=5, column=0)
 
+    def generate_audio(self, event: tk.Event):
+        text = event.widget.get_text()
+        self.task_thread = threading.Thread(
+            target=self.generate_response,
+            args=(text,),
+        )
+        self.task_thread.start()
+
+    def get_response(self):
+        return self.response
+
+    def generate_response(self, text):
+        self.response, self.audio = self.api(text, **self.get_kwargs())
+        self.master.event_generate("<<Generated>>")
+        self.play_audio()
+
+    def regenerate_response(self):
+        self.response, self.audio = self.api.regenerate_response(**self.get_kwargs())
+        self.master.event_generate("<<Regenerated>>")
+        self.play_audio()
+
+    def play_audio(self):
+        sd.play(self.audio, self.rate)
+        sd.wait()
+        self.task_thread.join()
+
     def replay_button_click(self):
-        if not self.generating:
-            self.master.replay_f()
+        self.task_thread = threading.Thread(target=self.play_audio)
+        self.task_thread.start()
 
     def regenerate_response_button_click(self):
-        if not self.generating:
-            self.master.api.openai_api.message_history.pop()
-            self.master.regenerate_response()
+        self.task_thread = threading.Thread(target=self.regenerate_response)
+        self.task_thread.start()
 
     def save_audio_button_click(self):
-        if not self.generating:
-            try:
-                current_directory = os.getcwd()
-                output_folder = os.path.join(current_directory, "output_audio_response")
-                os.makedirs(output_folder, exist_ok=True)
-                wav_path = os.path.join(output_folder, "audio_response.wav")
-                sf.write(wav_path, self.master.audio, self.master.rate)
-                print(f"Audio saved successfully to {wav_path}")
-            except Exception as e:
-                print(f"Error saving audio: {e}")
-
-    def set_generating_state(self, state):
-        self.generating = state
-        if state:
-            self.disable_buttons()
-        else:
-            self.enable_buttons()
-
-    def disable_buttons(self):
-        self.replay_button.config(state=tk.DISABLED)
-        self.regenerate_response_button.config(state=tk.DISABLED)
-
-    def enable_buttons(self):
-        self.replay_button.config(state=tk.NORMAL)
-        self.regenerate_response_button.config(state=tk.NORMAL)
+        try:
+            current_directory = os.getcwd()
+            output_folder = os.path.join(current_directory, "output_audio_response")
+            os.makedirs(output_folder, exist_ok=True)
+            wav_path = os.path.join(output_folder, "audio_response.wav")
+            sf.write(wav_path, self.audio, self.rate)
+            print(f"Audio saved successfully to {wav_path}")
+        except Exception as e:
+            print(f"Error saving audio: {e}")
 
     def get_kwargs(self):
         return {
@@ -133,32 +144,41 @@ class LeftFrame(tk.Frame):
 
         self.text_entry = tk.Entry(self, width=30)
         self.text_entry.grid(row=10, column=0, columnspan=2)
-        self.text_entry.bind("<Return>", self.master.generate_audio)
+        self.text_entry.bind("<Return>", self.on_enter)
+        self.master.bind("<<Generated>>", self.on_generated)
+        self.master.bind("<<Regenerated>>", self.on_regenerated)
+
+    def on_enter(self, event: tk.Event):
+        self.master.event_generate("<<Generate>>")
+
+    def on_generated(self, event: tk.Event):
+        self.append_text("[Kaguya] >> " + event.widget.get_response() + "\n")
+
+    def on_regenerated(self, event: tk.Event):
+        self.text.delete("end-2l", tk.END)
+        self.append_text("[Kaguya] >> " + event.widget.get_response() + "\n")
+
+    def get_text(self):
+        text = self.text_entry.get()
+        self.text_entry.delete(0, tk.END)
+        self.append_text("[You] >> " + text + "\n")
+        return text
 
     def append_text(self, text):
         self.text.config(state=tk.NORMAL)
         self.text.insert(tk.END, text + "\n")
         self.text.config(state=tk.DISABLED)
 
-    def get_text(self):
-        return self.text_entry.get()
-
-    def clear_text(self):
-        self.text_entry.delete(0, tk.END)
-
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Text to Speech App")
+        self.title("AI Voice Assistant Kaguya-sama")
         self.geometry("430x350")
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
-
-        self.api = API()
-        self.rate = self.api.rate
 
         self.left_frame = LeftFrame(self)
         self.left_frame.grid(row=0, column=0, sticky="nsew")
@@ -166,45 +186,11 @@ class App(tk.Tk):
         self.right_frame = RightFrame(self)
         self.right_frame.grid(row=0, column=1, sticky="nsew")
 
-        self.audio = None
-        self.task_thread = None
-
-    def generate_audio(self, event=None):
-        self.text = self.left_frame.get_text()
-        self.left_frame.clear_text()
-        self.left_frame.append_text("[You] >> " + self.text + "\n")
-
-        self.task_thread = threading.Thread(
-            target=self.generate_and_play, args=(self.text,)
-        )
-        self.task_thread.start()
-
-    def regenerate_response(self, event=None):
-        self.right_frame.set_generating_state(True)
-        self.task_thread = threading.Thread(
-            target=self.generate_and_play, args=(self.text,)
-        )
-        self.task_thread.start()
-
-    def replay_f(self, event=None):
-        self.right_frame.set_generating_state(True)
-        self.task_thread = threading.Thread(target=self.replay)
-        self.task_thread.start()
-
-    def replay(self, event=None):
-        sd.play(self.audio, self.rate)
-        sd.wait()
-        self.right_frame.set_generating_state(False)
-        self.task_thread.join()
-
-    def generate_and_play(self, text):
-        kwargs = self.right_frame.get_kwargs()
-        response, self.audio = self.api(text, **kwargs)
-        self.left_frame.append_text("[Kaguya] >> " + response + "\n")
-        sd.play(self.audio, self.rate)
-        sd.wait()
-        self.right_frame.set_generating_state(False)
-        self.task_thread.join()
+    def get_text(self):
+        return self.left_frame.get_text()
+    
+    def get_response(self):
+        return self.right_frame.get_response()
 
 
 if __name__ == "__main__":

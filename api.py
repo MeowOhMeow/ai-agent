@@ -27,6 +27,14 @@ class API:
     def get_speakers(self) -> list:
         return self.TTS.get_speakers()
 
+    def regenerate_response(self, **kwargs):
+        response = self.openai_api.regenerate_response()
+        print(f"Response: {response}")
+        translated = self.translator(response)
+        print(f"Translated: {translated}")
+        audio = self.TTS(translated, **kwargs)
+        return response, audio
+
     def __call__(self, text: str, **kwargs) -> np.ndarray:
         response = self.openai_api(text)
         print(f"Response: {response}")
