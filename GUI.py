@@ -108,9 +108,6 @@ class RightFrame(tk.Frame):
         sd.wait()
 
     def play(self):
-        if self.play_thread and self.play_thread.is_alive():
-            return
-
         self.play_thread = threading.Thread(target=self.play_audio)
         self.play_thread.start()
 
