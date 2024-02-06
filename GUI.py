@@ -35,6 +35,7 @@ class RightFrame(tk.Frame):
 
         self.master.bind("<<Generate>>", self.generate_audio)
         self.task_thread = None
+        self.play_thread = None
 
     def create_widgets(self):
         self.speed_scale = ScaleFrame(
@@ -80,6 +81,8 @@ class RightFrame(tk.Frame):
         self.save_audio_button.grid(row=5, column=0)
 
     def generate_audio(self, event: tk.Event):
+        if self.task_thread and self.task_thread.is_alive():
+            return
         text = event.widget.get_text()
         self.task_thread = threading.Thread(
             target=self.generate_response,
@@ -93,23 +96,28 @@ class RightFrame(tk.Frame):
     def generate_response(self, text):
         self.response, self.audio = self.api(text, **self.get_kwargs())
         self.master.event_generate("<<Generated>>")
-        self.play_audio()
+        self.play_thread = threading.Thread(target=self.play_audio)
+        self.play_thread.start()
 
     def regenerate_response(self):
         self.response, self.audio = self.api.regenerate_response(**self.get_kwargs())
         self.master.event_generate("<<Regenerated>>")
-        self.play_audio()
+        self.play_thread = threading.Thread(target=self.play_audio)
+        self.play_thread.start()
 
     def play_audio(self):
         sd.play(self.audio, self.rate)
         sd.wait()
-        self.task_thread.join()
 
     def replay_button_click(self):
-        self.task_thread = threading.Thread(target=self.play_audio)
-        self.task_thread.start()
+        if self.play_thread and self.play_thread.is_alive():
+            return
+        self.play_thread = threading.Thread(target=self.play_audio)
+        self.play_thread.start()
 
     def regenerate_response_button_click(self):
+        if self.task_thread and self.task_thread.is_alive():
+            return
         self.task_thread = threading.Thread(target=self.regenerate_response)
         self.task_thread.start()
 
@@ -188,7 +196,7 @@ class App(tk.Tk):
 
     def get_text(self):
         return self.left_frame.get_text()
-    
+
     def get_response(self):
         return self.right_frame.get_response()
 
