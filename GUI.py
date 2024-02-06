@@ -1,30 +1,23 @@
 import tkinter as tk
-import sounddevice as sd
+from tkinter import Scale
 import threading
-from api import API
-import os
+import sounddevice as sd
 import soundfile as sf
-import numpy as np
+import os
+from api import API
 
 
 class ScaleFrame(tk.Frame):
-    def __init__(self, master, label, from_, to, resolution, init_val, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
-
-        scale_label = tk.Label(self, text=label)
-        scale_label.grid(row=0, column=0)
-
-        self.scale = tk.Scale(
-            self,
-            from_=from_,
-            to=to,
-            resolution=resolution,
-            orient=tk.HORIZONTAL,
+    def __init__(self, master, label, from_, to, resolution, init_val):
+        super().__init__(master)
+        self.label = label
+        self.scale = Scale(
+            self, from_=from_, to=to, resolution=resolution, orient=tk.HORIZONTAL
         )
         self.scale.set(init_val)
+        self.label = tk.Label(self, text=label)
+
+        self.label.grid(row=0, column=0)
         self.scale.grid(row=0, column=1)
 
     def get(self):
@@ -34,9 +27,14 @@ class ScaleFrame(tk.Frame):
 class RightFrame(tk.Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-
         self.grid_columnconfigure(0, weight=1)
 
+        self.create_widgets()
+
+        self.generating = False
+        self.disable_buttons()
+
+    def create_widgets(self):
         self.speed_scale = ScaleFrame(
             self, label="Speed", from_=0.1, to=2, resolution=0.1, init_val=0.7
         )
@@ -79,10 +77,6 @@ class RightFrame(tk.Frame):
         )
         self.save_audio_button.grid(row=5, column=0)
 
-        self.generating = False  # 新增一個變數來追蹤是否正在生成
-        self.replay_button.config(state=tk.DISABLED)  # 不能剛啟動就按replay
-        self.regenerate_response_button.config(state=tk.DISABLED)
-
     def replay_button_click(self):
         if not self.generating:
             self.master.replay_f()
@@ -96,12 +90,8 @@ class RightFrame(tk.Frame):
         if not self.generating:
             try:
                 current_directory = os.getcwd()
-
-                # Create the output_audio_response folder if it doesn't exist
                 output_folder = os.path.join(current_directory, "output_audio_response")
                 os.makedirs(output_folder, exist_ok=True)
-
-                # Save the WAV file
                 wav_path = os.path.join(output_folder, "audio_response.wav")
                 sf.write(wav_path, self.master.audio, self.master.rate)
                 print(f"Audio saved successfully to {wav_path}")
@@ -111,11 +101,17 @@ class RightFrame(tk.Frame):
     def set_generating_state(self, state):
         self.generating = state
         if state:
-            self.replay_button.config(state=tk.DISABLED)
-            self.regenerate_response_button.config(state=tk.DISABLED)
+            self.disable_buttons()
         else:
-            self.replay_button.config(state=tk.NORMAL)
-            self.regenerate_response_button.config(state=tk.NORMAL)
+            self.enable_buttons()
+
+    def disable_buttons(self):
+        self.replay_button.config(state=tk.DISABLED)
+        self.regenerate_response_button.config(state=tk.DISABLED)
+
+    def enable_buttons(self):
+        self.replay_button.config(state=tk.NORMAL)
+        self.regenerate_response_button.config(state=tk.NORMAL)
 
     def get_kwargs(self):
         return {
@@ -129,6 +125,9 @@ class LeftFrame(tk.Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
+        self.create_widgets()
+
+    def create_widgets(self):
         self.text = tk.Text(self, width=30, height=20, state=tk.DISABLED)
         self.text.grid(row=0, column=0)
 
