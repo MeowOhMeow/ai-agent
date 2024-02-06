@@ -32,7 +32,7 @@ class ScaleFrame(tk.Frame):
 
 
 class RightFrame(tk.Frame):
-    def __init__(self, master, *args, **kwargs):
+    def __init__(self, master, audio, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
         self.grid_columnconfigure(0, weight=1)
@@ -74,7 +74,7 @@ class RightFrame(tk.Frame):
         self.generating = False  # 新增一個變數來追蹤是否正在生成
         self.replay_button.config(state=tk.DISABLED)    # 不能剛啟動就按replay
         self.regenerate_response_button.config(state=tk.DISABLED) 
-        self.audio = None  # 在這裡初始化
+        self.audio = audio
 
     def replay_button_click(self):
         if not self.generating:
@@ -88,16 +88,16 @@ class RightFrame(tk.Frame):
     def save_audio_button_click(self):
         if not self.generating:
             try:
+                print(type(self.audio))
                 current_directory = os.getcwd()
-                print(current_directory)
 
                 # Create the output_audio_response folder if it doesn't exist
-                output_folder = os.path.join(os.path.dirname(current_directory), "output_audio_response")
+                output_folder = os.path.join(current_directory, "output_audio_response")
                 os.makedirs(output_folder, exist_ok=True)
 
                 # Save the WAV file
                 wav_path = os.path.join(output_folder, "audio_response.wav")
-                sf.write(wav_path, self.audio, self.master.rate, format='wav')
+                sf.write(wav_path, self.audio, self.master.rate)
                 print(f"Audio saved successfully to {wav_path}")
             except Exception as e:
                 print(f"Error saving audio: {e}")
@@ -153,13 +153,15 @@ class App(tk.Tk):
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
+        self.audio = None
+
         self.api = API()
         self.rate = self.api.rate
 
         self.left_frame = LeftFrame(self)
         self.left_frame.grid(row=0, column=0, sticky="nsew")
 
-        self.right_frame = RightFrame(self)
+        self.right_frame = RightFrame(self, self.audio)
         self.right_frame.grid(row=0, column=1, sticky="nsew")
 
         self.task_thread = None
