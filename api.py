@@ -37,7 +37,7 @@ class API:
         audio = self.tts(translated, **kwargs)
         print(f"Response: {response}")
         print(f"Translated: {translated}")
-        return response, audio
+        return audio
 
     def __call__(self, text: str, **kwargs) -> np.ndarray:
         response = self.openai_api(text)
