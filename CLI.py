@@ -1,7 +1,10 @@
 from api import API
 
 import sounddevice as sd
+import soundfile as sf
 from abc import ABC, abstractmethod
+
+import os
 
 
 class Command(ABC):
@@ -106,6 +109,39 @@ class RegenerateCommand(Command):
         sd.wait()
 
 
+class SaveCommand(Command):
+    def __init__(self):
+        super().__init__(
+            "save",
+            "Save the audio response to a file",
+            "save",
+        )
+        current_directory = os.getcwd()
+        output_folder = os.path.join(current_directory, "output_audio_response")
+        os.makedirs(output_folder, exist_ok=True)
+        self.output_path = os.path.join(output_folder, "audio_response.wav")
+
+    def __call__(self, *args):
+        global audio, rate
+        if audio is None:
+            print("No audio to save")
+            return
+        sf.write(self.output_path, audio, rate)
+
+
+class PlayCommand(Command):
+    def __init__(self):
+        super().__init__("play", "Play the audio response", "play")
+
+    def __call__(self, *args):
+        global audio, rate
+        if audio is None:
+            print("No audio to play")
+            return
+        sd.play(audio, rate)
+        sd.wait()
+
+
 kwargs = {
     "speaker": "kaguya",
     "language": "日本語",
@@ -116,6 +152,7 @@ kwargs = {
 
 api = API()
 rate = api.rate
+audio = None
 
 # Map commands to functions
 commands = {
@@ -125,6 +162,8 @@ commands = {
     "reset": ResetCommand(kwargs),
     "kwargs": KwargsCommand(),
     "regenerate": RegenerateCommand(api),
+    "save": SaveCommand(),
+    "play": PlayCommand(),
 }
 
 
