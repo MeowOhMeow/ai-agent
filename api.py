@@ -31,13 +31,13 @@ class API:
         print(f"Translated: {translated}")
         return response, audio
     
-    def regenerate_audio(self, text: str, **kwargs):
-        print("test")
-        translated = self.translator(text)
+    def regenerate_audio(self, **kwargs):
+        response = self.openai_api.regenerate_response()
+        translated = self.translator(response)
         audio = self.tts(translated, **kwargs)
-        print(f"Response: {text}")
+        print(f"Response: {response}")
         print(f"Translated: {translated}")
-        return audio
+        return response, audio
 
     def __call__(self, text: str, **kwargs) -> np.ndarray:
         response = self.openai_api(text)
