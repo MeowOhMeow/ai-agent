@@ -5,6 +5,7 @@ import sounddevice as sd
 import soundfile as sf
 import os
 from api import API
+from PIL import Image, ImageTk
 
 
 class ScaleFrame(tk.Frame):
@@ -38,11 +39,22 @@ class RightFrame(tk.Frame):
         self.play_thread = None
 
     def create_widgets(self):
+
+        current_pic_directory = os.getcwd()
+        output_pic_folder = os.path.join(current_pic_directory, "widgets_picture")
+        os.makedirs(output_pic_folder, exist_ok=True)
+        img_path = os.path.join(output_pic_folder, "widgets_picture.png")
+        print(img_path)
+        self.img = ImageTk.PhotoImage(Image.open(img_path))
+        # 创建一个 Label 来显示图像，并将图像插入其中
+        label_pic = tk.Label(self, image=self.img)
+        label_pic.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+
+
         self.speed_scale = ScaleFrame(
             self, label="Speed", from_=0.1, to=2, resolution=0.1, init_val=0.7
         )
-        self.speed_scale.grid(row=0, column=0)
-
+        self.speed_scale.grid(row=2,column = 0)
         self.noise_scale_scale = ScaleFrame(
             self,
             label="Noise Scale",
@@ -51,7 +63,7 @@ class RightFrame(tk.Frame):
             resolution=0.05,
             init_val=0.665,
         )
-        self.noise_scale_scale.grid(row=1, column=0)
+        self.noise_scale_scale.grid(row=3,column = 0)
 
         self.noise_scale_w_scale = ScaleFrame(
             self,
@@ -61,31 +73,31 @@ class RightFrame(tk.Frame):
             resolution=0.05,
             init_val=0.6,
         )
-        self.noise_scale_w_scale.grid(row=2, column=0)
+        self.noise_scale_w_scale.grid(row=4,column = 0)
 
         self.replay_button = tk.Button(
             self, text="Replay", command=self.play
         )
-        self.replay_button.grid(row=3, column=0)
+        self.replay_button.grid(row=5, column=0)
 
         self.regenerate_response_button = tk.Button(
             self,
             text="Regenerate_response",
             command=self.regenerate_response_button_click,
         )
-        self.regenerate_response_button.grid(row=4, column=0)
+        self.regenerate_response_button.grid(row=6, column=0)
 
         self.regenerate_audio_button = tk.Button(
             self,
             text="Regenerate_audio",
             command=self.regenerate_audio_button_click,
         )
-        self.regenerate_audio_button.grid(row=6, column=0)
+        self.regenerate_audio_button.grid(row=7, column=0)
 
         self.save_audio_button = tk.Button(
             self, text="Save audio response ", command=self.save_audio_button_click
         )
-        self.save_audio_button.grid(row=5, column=0)
+        self.save_audio_button.grid(row=8, column=0)
 
     def get_response(self):
         return self.response
@@ -161,11 +173,11 @@ class LeftFrame(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.text = tk.Text(self, width=30, height=20, state=tk.DISABLED)
+        self.text = tk.Text(self, width=55, height=20, state=tk.DISABLED, font=("Microsoft JhengHei", 12), fg = self.master.font_color, bg =self.master.input_background_color)
         self.text.grid(row=0, column=0)
 
-        self.text_entry = tk.Entry(self, width=30)
-        self.text_entry.grid(row=10, column=0, columnspan=2)
+        self.text_entry = tk.Entry(self, width=55, font=("Microsoft JhengHei", 12), fg = self.master.font_color, bg =self.master.input_background_color)
+        self.text_entry.grid(row=1, column=0, columnspan=2, pady = 2)
         self.text_entry.bind("<Return>", self.on_enter)
         self.master.bind("<<Generated>>", self.on_generated)
         self.master.bind("<<Regenerated>>", self.on_regenerated)
@@ -197,15 +209,24 @@ class App(tk.Tk):
         super().__init__()
 
         self.title("AI Voice Assistant Kaguya-sama")
-        self.geometry("430x350")
+        self.geometry("710x430") 
+        self.main_color = "#DDDDDD"     #444444
+        self.background_color = self.main_color   #444444
+        self.input_background_color = self.main_color     #444444
+        self.output_background_color = self.main_color    #444444
+        self.font_color = "#000000"     #FFFFFF
+
+        self.configure(bg=self.background_color)  # Set background color of the whole application
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
         self.left_frame = LeftFrame(self)
+        self.left_frame.configure(bg=self.background_color)  # Set background color of the left frame
         self.left_frame.grid(row=0, column=0, sticky="nsew")
 
         self.right_frame = RightFrame(self)
+        self.right_frame.configure(bg=self.background_color)  # Set background color of the right frame
         self.right_frame.grid(row=0, column=1, sticky="nsew")
 
     def get_text(self):
