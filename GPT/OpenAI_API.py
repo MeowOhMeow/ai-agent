@@ -31,37 +31,7 @@ class OpenAI_API:
 
     def regenerate_response(self):
         self.message_history.pop()
-        gpt_prompt = kaguya_prompt  # 塞入一開始的洗腦咒語
-        for element in self.message_history:  # 加入之前的對話紀錄
-            gpt_prompt += element + "\n"
-        gpt_prompt += "请不要忘记给你的设定，不要作任何评论，接下来我们继续进行对话："
-
-        completion = self.client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": kaguya_prompt,  # prompt
-                },
-                {
-                    "role": "user",
-                    "content": self.pre_message,  # 輸入的文字
-                },
-            ],
-        )
-
-        self.message_history.append(
-            f"'user:{self.pre_message}, 四宮輝夜:{completion.choices[0].message.content}'"
-        )
-
-        print(f"Number of tokens in the prompt: {completion.usage.prompt_tokens}")
-        print(
-            f"Number of tokens in the generated completion: {completion.usage.completion_tokens}"
-        )
-        print(
-            f"Total number of tokens used in the request (prompt + completion): {completion.usage.total_tokens}"
-        )
-        return completion.choices[0].message.content
+        self(self.pre_message)
 
     def __call__(self, text: str) -> str:
         self.pre_message = text
