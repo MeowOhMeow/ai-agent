@@ -62,19 +62,26 @@ class RightFrame(tk.Frame):
         )
         self.noise_scale_w_scale.grid(row=2, column=0)
 
-        self.replay_button = tk.Button(self, text="Replay", command=self.replay_button_click)
+        self.replay_button = tk.Button(
+            self, text="Replay", command=self.replay_button_click
+        )
         self.replay_button.grid(row=3, column=0)
 
-        self.regenerate_response_button = tk.Button(self, text="Regenerate_response", command=self.regenerate_response_button_click)
+        self.regenerate_response_button = tk.Button(
+            self,
+            text="Regenerate_response",
+            command=self.regenerate_response_button_click,
+        )
         self.regenerate_response_button.grid(row=4, column=0)
 
-        self.save_audio_button = tk.Button(self, text="Save audio response ", command=self.save_audio_button_click)
+        self.save_audio_button = tk.Button(
+            self, text="Save audio response ", command=self.save_audio_button_click
+        )
         self.save_audio_button.grid(row=5, column=0)
-        
+
         self.generating = False  # 新增一個變數來追蹤是否正在生成
-        self.replay_button.config(state=tk.DISABLED)    # 不能剛啟動就按replay
-        self.regenerate_response_button.config(state=tk.DISABLED) 
-        self.audio = None  # 在這裡初始化
+        self.replay_button.config(state=tk.DISABLED)  # 不能剛啟動就按replay
+        self.regenerate_response_button.config(state=tk.DISABLED)
 
     def replay_button_click(self):
         if not self.generating:
@@ -89,20 +96,17 @@ class RightFrame(tk.Frame):
         if not self.generating:
             try:
                 current_directory = os.getcwd()
-                print(current_directory)
 
                 # Create the output_audio_response folder if it doesn't exist
                 output_folder = os.path.join(current_directory, "output_audio_response")
-                print(output_folder)
                 os.makedirs(output_folder, exist_ok=True)
-                print(f"")
+
                 # Save the WAV file
                 wav_path = os.path.join(output_folder, "audio_response.wav")
-                sf.write(wav_path, self.audio, self.master.rate, format='wav')
+                sf.write(wav_path, self.master.audio, self.master.rate)
                 print(f"Audio saved successfully to {wav_path}")
             except Exception as e:
                 print(f"Error saving audio: {e}")
-
 
     def set_generating_state(self, state):
         self.generating = state
@@ -112,7 +116,7 @@ class RightFrame(tk.Frame):
         else:
             self.replay_button.config(state=tk.NORMAL)
             self.regenerate_response_button.config(state=tk.NORMAL)
-        
+
     def get_kwargs(self):
         return {
             "speed": self.speed_scale.get(),
@@ -163,6 +167,7 @@ class App(tk.Tk):
         self.right_frame = RightFrame(self)
         self.right_frame.grid(row=0, column=1, sticky="nsew")
 
+        self.audio = None
         self.task_thread = None
 
     def generate_audio(self, event=None):
@@ -170,12 +175,16 @@ class App(tk.Tk):
         self.left_frame.clear_text()
         self.left_frame.append_text("[You] >> " + self.text + "\n")
 
-        self.task_thread = threading.Thread(target=self.generate_and_play, args=(self.text,))
+        self.task_thread = threading.Thread(
+            target=self.generate_and_play, args=(self.text,)
+        )
         self.task_thread.start()
 
     def regenerate_response(self, event=None):
         self.right_frame.set_generating_state(True)
-        self.task_thread = threading.Thread(target=self.generate_and_play, args=(self.text,))
+        self.task_thread = threading.Thread(
+            target=self.generate_and_play, args=(self.text,)
+        )
         self.task_thread.start()
 
     def replay_f(self, event=None):
@@ -197,6 +206,7 @@ class App(tk.Tk):
         sd.wait()
         self.right_frame.set_generating_state(False)
         self.task_thread.join()
+
 
 if __name__ == "__main__":
     app = App()
