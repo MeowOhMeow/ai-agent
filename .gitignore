@@ -10,3 +10,4 @@ VITS/*
 **/__pycache__/*
 !VITS\TTS.py
 GPT/openai_key
+output_audio_response
