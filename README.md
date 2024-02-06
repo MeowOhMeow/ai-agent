@@ -37,7 +37,5 @@
 2. 在conda env update environment.yml
 3. 在 VITS\output_models 放入 finetune_speaker.json, G_latest.pth [載點 - Google drive](https://drive.google.com/drive/folders/1-40Dd3CRDzVGoL5gdRj39oN_uWKdOvp2?usp=sharing)
 4. 在 GPT\openai_key 放入openai api key
-5. run main.py
+5. run GUI.py 或 CLI.py
 
-## 其他：
-- GUI還沒做好
