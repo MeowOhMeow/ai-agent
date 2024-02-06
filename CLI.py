@@ -1,10 +1,6 @@
 from api import API
 
 import sounddevice as sd
-
-import torch
-import gc
-
 from abc import ABC, abstractmethod
 
 
@@ -97,28 +93,17 @@ class KwargsCommand(Command):
         global kwargs
         print(kwargs)
 
+
 class RegenerateCommand(Command):
     def __init__(self, api_instance):
         super().__init__("regenerate", "Regenerate audio response", "regenerate")
         self.api = api_instance
-        self.response = None  # 初始化 response
-        self.audio = None  # 初始化 audio
 
-    def __call__(self):
-        if self.api is None:
-            print("Error: API instance is None")
-            return
-
-        try:
-            print("test1")
-            self.response, self.audio = self.api.regenerate_response(**kwargs)
-            if self.response is None or self.audio is None:
-                print("Error: API response or audio is None")
-                return
-            sd.play(self.audio, rate)
-            sd.wait()
-        except Exception as e:
-            print("Error:", e)
+    def __call__(self, *args):
+        global kwargs, rate
+        _, audio = self.api.regenerate_response(**kwargs)
+        sd.play(audio, rate)
+        sd.wait()
 
 
 kwargs = {
@@ -130,6 +115,7 @@ kwargs = {
 }
 
 api = API()
+rate = api.rate
 
 # Map commands to functions
 commands = {
@@ -141,8 +127,6 @@ commands = {
     "regenerate": RegenerateCommand(api),
 }
 
-
-rate = api.rate
 
 print("type 'help' for help")
 
@@ -163,7 +147,3 @@ while running:
         # play
         sd.play(audio, rate)
         sd.wait()
-
-        # clear memory
-        torch.cuda.empty_cache()
-        gc.collect()

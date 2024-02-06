@@ -31,7 +31,7 @@ class OpenAI_API:
 
     def regenerate_response(self):
         self.message_history.pop()
-        self(self.pre_message)
+        return self(self.pre_message)
 
     def __call__(self, text: str) -> str:
         self.pre_message = text

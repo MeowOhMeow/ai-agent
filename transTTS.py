@@ -16,23 +16,26 @@ elif version == "v2":
     from Translator.Translator_v2 import Translator
 
 
-class transTTS:
+class TransTTS:
     def __init__(self) -> None:
         self.translator = Translator()
         self.tts = TTS()
+        self.rate = self.tts.rate
 
-    def __call__(self, text: str, **kwargs: Any) -> Tuple[np.ndarray, int]:
+    def __call__(self, text: str, **kwargs: Any):
         print(text)
         translated = self.translator(text)
+        translated = translated.replace("\n", "。")
         print(translated)
         audio = self.tts(translated, **kwargs)
-        return audio, self.tts.rate
+        return audio
 
 
 if __name__ == "__main__":
-    transTTS = transTTS()
-    audio, rate = transTTS(
-        "ひなの想讓一ノ瀬うるは說出福利台詞而撰寫妄想音聲，沒想到暴露後馬上收到完美前輩的配音"
+    TransTTS = TransTTS()
+    rate = TransTTS.rate
+    audio = TransTTS(
+        "ひなの想讓一ノ瀬うるは說出福利台詞而撰寫妄想音聲，沒想到暴露後馬上收到完美前輩的配音\nFuwawa問Reine夜這い(夜襲)的印尼話？ 上網查了一下意思之後發現超牙敗的..."
     )
     # play
     sd.play(audio, rate)
