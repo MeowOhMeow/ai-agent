@@ -112,8 +112,7 @@ class RightFrame(tk.Frame):
 
     def regenerate_audio(self):
         self.audio = self.api.regenerate_audio(**self.get_kwargs())
-        self.master.event_generate("<<Regenerated>>")
-        print("test")
+        #self.master.event_generate("<<Regenerated>>")
         self.play()
 
     def play_audio(self):

@@ -35,8 +35,6 @@ class API:
         response = self.openai_api.regenerate_response()
         translated = self.translator(response)
         audio = self.tts(translated, **kwargs)
-        print(f"Response: {response}")
-        print(f"Translated: {translated}")
         return audio
 
     def __call__(self, text: str, **kwargs) -> np.ndarray:
