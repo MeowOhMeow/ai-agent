@@ -64,7 +64,7 @@ class RightFrame(tk.Frame):
         self.noise_scale_w_scale.grid(row=2, column=0)
 
         self.replay_button = tk.Button(
-            self, text="Replay", command=self.replay_button_click
+            self, text="Replay", command=self.play
         )
         self.replay_button.grid(row=3, column=0)
 
@@ -80,6 +80,9 @@ class RightFrame(tk.Frame):
         )
         self.save_audio_button.grid(row=5, column=0)
 
+    def get_response(self):
+        return self.response
+
     def generate_audio(self, event: tk.Event):
         if self.task_thread and self.task_thread.is_alive():
             return
@@ -90,28 +93,24 @@ class RightFrame(tk.Frame):
         )
         self.task_thread.start()
 
-    def get_response(self):
-        return self.response
-
     def generate_response(self, text):
         self.response, self.audio = self.api(text, **self.get_kwargs())
         self.master.event_generate("<<Generated>>")
-        self.play_thread = threading.Thread(target=self.play_audio)
-        self.play_thread.start()
+        self.play()
 
     def regenerate_response(self):
         self.response, self.audio = self.api.regenerate_response(**self.get_kwargs())
         self.master.event_generate("<<Regenerated>>")
-        self.play_thread = threading.Thread(target=self.play_audio)
-        self.play_thread.start()
+        self.play()
 
     def play_audio(self):
         sd.play(self.audio, self.rate)
         sd.wait()
 
-    def replay_button_click(self):
+    def play(self):
         if self.play_thread and self.play_thread.is_alive():
             return
+
         self.play_thread = threading.Thread(target=self.play_audio)
         self.play_thread.start()
 
