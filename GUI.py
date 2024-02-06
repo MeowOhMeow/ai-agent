@@ -92,9 +92,10 @@ class RightFrame(tk.Frame):
                 print(current_directory)
 
                 # Create the output_audio_response folder if it doesn't exist
-                output_folder = os.path.join(os.path.dirname(current_directory), "output_audio_response")
+                output_folder = os.path.join(current_directory, "output_audio_response")
+                print(output_folder)
                 os.makedirs(output_folder, exist_ok=True)
-
+                print(f"")
                 # Save the WAV file
                 wav_path = os.path.join(output_folder, "audio_response.wav")
                 sf.write(wav_path, self.audio, self.master.rate, format='wav')
