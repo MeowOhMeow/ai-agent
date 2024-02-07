@@ -27,14 +27,18 @@ class OpenAI_API:
         self.api_key = API_KEY
         self.client = OpenAI(api_key=self.api_key)
         self.message_history = deque(maxlen=message_history_length)
-        self.pre_message = ""
+        self.last_message = ""
+        self.last_response = ""
 
     def regenerate_response(self):
         self.message_history.pop()
-        return self(self.pre_message)
+        return self(self.last_message)
+
+    def get_last_response(self):
+        return self.last_response
 
     def __call__(self, text: str) -> str:
-        self.pre_message = text
+        self.last_message = text
         gpt_prompt = kaguya_prompt  # 塞入一開始的洗腦咒語
         for element in self.message_history:  # 加入之前的對話紀錄
             gpt_prompt += element + "\n"
@@ -54,8 +58,11 @@ class OpenAI_API:
             ],
         )
 
+        response = completion.choices[0].message.content
+        self.last_response = response
+
         self.message_history.append(
-            f"'user:{text}, 四宮輝夜:{completion.choices[0].message.content}'"
+            f"'user:{text}, 四宮輝夜:{response}'"
         )  # 將此對話紀錄進message_history的頭(當前的對話紀錄)
 
         print(f"Number of tokens in the prompt: {completion.usage.prompt_tokens}")
@@ -66,7 +73,7 @@ class OpenAI_API:
             f"Total number of tokens used in the request (prompt + completion): {completion.usage.total_tokens}"
         )
 
-        return completion.choices[0].message.content
+        return response
 
 
 if __name__ == "__main__":
