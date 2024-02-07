@@ -33,6 +33,7 @@
 - [zixiiu/Digital_Life_Server](https://github.com/zixiiu/Digital_Life_Server)
 
 ## 使用方式：
+如果單純想玩語音可以用 [Plachtaa/VITS-fast-fine-tuning](https://github.com/Plachtaa/VITS-fast-fine-tuning/tree/main) 的release，搭配第三點的模型
 1. 請在 VITS 下 build [Plachtaa/VITS-fast-fine-tuning](https://github.com/Plachtaa/VITS-fast-fine-tuning/tree/main)，具體請參考 [LOCAL.md](https://github.com/Plachtaa/VITS-fast-fine-tuning/blob/main/LOCAL.md)
 2. 在conda env update environment.yml
 3. 在 VITS\output_models 放入 finetune_speaker.json, G_latest.pth [載點 - Google drive](https://drive.google.com/drive/folders/1-40Dd3CRDzVGoL5gdRj39oN_uWKdOvp2?usp=sharing)
