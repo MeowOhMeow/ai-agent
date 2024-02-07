@@ -26,21 +26,21 @@ class API:
     def regenerate_response(self, **kwargs):
         response = self.openai_api.regenerate_response()
         translated = self.translator(response)
-        audio = self.tts(translated, **kwargs)
+        audio = self.tts(translated.replace("\n", "。"), **kwargs)
         print(f"Response: {response}")
         print(f"Translated: {translated}")
         return response, audio
-    
+
     def regenerate_audio(self, **kwargs):
         response = self.openai_api.get_last_response()
         translated = self.translator(response)
-        audio = self.tts(translated, **kwargs)
+        audio = self.tts(translated.replace("\n", "。"), **kwargs)
         return audio
 
     def __call__(self, text: str, **kwargs) -> np.ndarray:
         response = self.openai_api(text)
         translated = self.translator(response)
-        audio = self.tts(translated, **kwargs)
+        audio = self.tts(translated.replace("\n", "。"), **kwargs)
         print(f"Response: {response}")
         print(f"Translated: {translated}")
         return response, audio
