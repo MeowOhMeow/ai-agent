@@ -32,7 +32,7 @@ class API:
         return response, audio
     
     def regenerate_audio(self, **kwargs):
-        response = self.openai_api.regenerate_response()
+        response = self.openai_api.get_last_response()
         translated = self.translator(response)
         audio = self.tts(translated, **kwargs)
         return audio
