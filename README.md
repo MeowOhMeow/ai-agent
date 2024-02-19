@@ -16,7 +16,6 @@
 ## 資料處理
 1. 去背景噪音  [facebookresearch/demucs](https://github.com/facebookresearch/demucs)
 2. 分群 nemo/vad_multilingual_marblenet, nemo/titanet_large, nemo/diar_msdd_telephonic [nemo](https://github.com/NVIDIA/NeMo/tree/main)
-3. 用[openai/whisper-base](https://huggingface.co/openai/whisper-base)轉成文字存起來
 
 ## 輸入
 1. 文字
