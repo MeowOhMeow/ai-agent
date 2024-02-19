@@ -39,3 +39,5 @@
 4. 在 GPT\openai_key 放入openai api key
 5. run GUI.py 或 CLI.py
 
+## 限制
+- 歷史紀錄長度上限是 hard code 成 5
