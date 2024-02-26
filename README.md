@@ -24,6 +24,7 @@
 
 ## 翻譯
 - [facebook/nllb-200-distilled-600M](https://huggingface.co/facebook/nllb-200-distilled-600M)
+- [translators](https://pypi.org/project/translators/)
 
 ## 語音合成
 - [Plachtaa/VITS-fast-fine-tuning](https://github.com/Plachtaa/VITS-fast-fine-tuning/tree/main)
