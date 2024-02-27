@@ -34,9 +34,9 @@ class TransTTS:
 if __name__ == "__main__":
     TransTTS = TransTTS()
     rate = TransTTS.rate
-    audio = TransTTS(
-        "ひなの想讓一ノ瀬うるは說出福利台詞而撰寫妄想音聲，沒想到暴露後馬上收到完美前輩的配音\nFuwawa問Reine夜這い(夜襲)的印尼話？ 上網查了一下意思之後發現超牙敗的..."
-    )
-    # play
-    sd.play(audio, rate)
-    sd.wait()
+    while True:
+        text = input("Text: ")
+        audio = TransTTS(text)
+        # play
+        sd.play(audio, rate)
+        sd.wait()
