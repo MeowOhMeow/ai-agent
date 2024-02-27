@@ -16,7 +16,6 @@
 ## 資料處理
 1. 去背景噪音  [facebookresearch/demucs](https://github.com/facebookresearch/demucs)
 2. 分群 nemo/vad_multilingual_marblenet, nemo/titanet_large, nemo/diar_msdd_telephonic [nemo](https://github.com/NVIDIA/NeMo/tree/main)
-3. 用[openai/whisper-base](https://huggingface.co/openai/whisper-base)轉成文字存起來
 
 ## 輸入
 1. 文字
@@ -25,6 +24,7 @@
 
 ## 翻譯
 - [facebook/nllb-200-distilled-600M](https://huggingface.co/facebook/nllb-200-distilled-600M)
+- [translators](https://pypi.org/project/translators/)
 
 ## 語音合成
 - [Plachtaa/VITS-fast-fine-tuning](https://github.com/Plachtaa/VITS-fast-fine-tuning/tree/main)
@@ -40,3 +40,5 @@
 4. 在 GPT\openai_key 放入openai api key
 5. run GUI.py 或 CLI.py
 
+## 限制
+- 歷史紀錄長度上限是 hard code 成 5
